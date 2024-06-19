@@ -103,7 +103,7 @@ class LHeureux:
         self.D_Ca_0 = 131.9         # diffusion coefficient of Ca (cm^2/a) (used to scale to dimensionless units)
         self.D_CO = 272.6           # scaled diffusion coefficient of CO3 (cm^2/a)
         
-        self.b = 5.0e-4             # sediment compressibility (Pa^-1)
+        self.b = 23.4375           # sediment compressibility (Pa^-1)
         self.beta = 0.1             # Hydraulic conductivity constant (cm/a)
 
         self.k1 = 1.0               # reaction rate constants (a^-1)
