@@ -67,6 +67,7 @@ spec = [
     ('delta', float64),
     ('phi_NR', float64),
     ('phi_inf', float64),
+    ('correction', float64),
     ('d_phi', float64),
     ('x_scale', float64),
     ('t_scale', float64),
@@ -104,7 +105,7 @@ class LHeureux:
         
         self.b = 5.0e-4             # sediment compressibility (Pa^-1)
         self.beta = 0.1             # Hydraulic conductivity constant (cm/a)
-        
+
         self.k1 = 1.0               # reaction rate constants (a^-1)
         self.k2 = self.k1         
         self.k3 = 0.1
@@ -137,7 +138,8 @@ class LHeureux:
         self.phi_inf = 0.01                                     # "a parameter" in Eqn 23
 
         # porosity diffusion coefficient
-        self.d_phi = self.beta*(self.phi_init**3 / ( 1 - self.phi_init ) )*\
+        self.correction = self.phi_init*3/self.phi_init**3
+        self.d_phi = self.beta*(self.phi_init**3 * self.correction / ( 1 - self.phi_init ) )*\
                     (1 / ( self.b*self.g*self.rho_w*( self.phi_NR - self.phi_inf ) ) )*\
                     (1 - np.exp( -10*( 1 - self.phi_init ) / self.phi_init) )*( 1 / self.D_Ca_0 )
         
@@ -461,7 +463,7 @@ else:
     
 ######################## time integration values ##############################
 
-tf = 2e-6#15/lh.t_scale # final sim time in a, scaled to dimensionless form 
+tf = 30 #15/lh.t_scale # final sim time in a, scaled to dimensionless form 
 
 # set the timestep manually, ONLY used in Euler mode
 delta_t = 1e-6#0.001/lh.t_scale   # timestep in a, 1.13e-2/tsc = 10^-6 in scaled time
