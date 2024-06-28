@@ -93,8 +93,8 @@ class LHeureux:
         # model parameters
         self.K_C = 10**-6.37        # Calcite solubility (M^2)
         self.K_A = 10**-6.19        # Aragonite solubility (M^2)
-        self.ADZ_top = 50           # top of the Aragonite dissolution zone (cm)
-        self.ADZ_bot = 150          # bottom of the Aragonite dissolution zone (cm)
+        self.ADZ_top = 150           # top of the Aragonite dissolution zone (cm)
+        self.ADZ_bot = 50          # bottom of the Aragonite dissolution zone (cm)
         self.sed_rate = 0.1         # sedimentation rate (cm/a)
         self.m = 2.48               # Power in def. of Omega_A (Eqn. 45)
         self.n = 2.8                # Power in def. of Omega_C (Eqn. 45)
@@ -150,7 +150,7 @@ class LHeureux:
         
         self.upwind_switch = 1          # optionally use upwind derivatives in AR, CA eqns
         self.smooth_switch = False      # option to use smoothed Heaviside fn for ADZ
-        self.FV_switch = 0              # optionally use the Fiadeiro-Veronis scheme ofr c_ca, co, phi
+        self.FV_switch = 1              # optionally use the Fiadeiro-Veronis scheme ofr c_ca, co, phi
     
     ################################################
     # hydraulic conductivity
@@ -418,8 +418,8 @@ tol = 1e-6             # tolerance for minimum variation between steps, needs tu
 count_threshold = 100  # tsteps for which solution variation must remain under to trigger steady state
 steady_count = 0       # variable to track how many continous steps a steady state was present in
 
-print_freq = 10         # frequency of print statements in Euler mode
-output_freq = 1         # frequency of soln storage
+print_freq = 10_000         # frequency of print statements in Euler mode
+output_freq = 10_000         # frequency of soln storage
 checkpnt_freq = 14e7    # frequency of restart file write
 
 ########################### space grid setup ##################################
@@ -461,7 +461,7 @@ else:
     
 ######################## time integration values ##############################
 
-tf = 2e-6#15/lh.t_scale # final sim time in a, scaled to dimensionless form 
+tf = 1#15/lh.t_scale # final sim time in a, scaled to dimensionless form 
 
 # set the timestep manually, ONLY used in Euler mode
 delta_t = 1e-6#0.001/lh.t_scale   # timestep in a, 1.13e-2/tsc = 10^-6 in scaled time
@@ -528,14 +528,14 @@ if (method=='Euler'):
                     np.count_nonzero(X_new[4*nnx:5*nnx] < 0)) )
         
         # apply limits if variables become unphysical
-        for j in range(0,5):
-            
-            if (j==0 or j==1):
-                X_new[j*nnx:(j+1)*nnx] = np.clip(X_new[j*nnx:(j+1)*nnx], 0.0, 1.0)
-            elif (j==4):
-                X_new[j*nnx:(j+1)*nnx] = np.clip(X_new[j*nnx:(j+1)*nnx], 0.01, 1.0)
-            else:
-                X_new[j*nnx:(j+1)*nnx] = np.clip(X_new[j*nnx:(j+1)*nnx], 0.0, 1.0e5)
+        # for j in range(0,5):
+        #     
+        #     if (j==0 or j==1):
+        #         X_new[j*nnx:(j+1)*nnx] = np.clip(X_new[j*nnx:(j+1)*nnx], 0.0, 1.0)
+        #     elif (j==4):
+        #         X_new[j*nnx:(j+1)*nnx] = np.clip(X_new[j*nnx:(j+1)*nnx], 0.01, 1.0)
+        #     else:
+        #         X_new[j*nnx:(j+1)*nnx] = np.clip(X_new[j*nnx:(j+1)*nnx], 0.0, 1.0e5)
 
         velstats_file.write("%d %4e %4e %4e %4e \n" % (i,np.min(U_temp),\
                                                          np.max(U_temp),\
