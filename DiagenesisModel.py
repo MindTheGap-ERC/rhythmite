@@ -432,8 +432,8 @@ lh = DiageneticModel()
 labels=['AR  ', 'CA  ', 'c_ca', 'c_co', 'phi ']
 
 # run settings 
-verbose = True        # print out extra info at each step, for debugging
-method = 'Euler'      # choice of method for time integration
+verbose = False        # print out extra info at each step, for debugging
+method = 'LSODA'      # choice of method for time integration
                       # options currently: 'Euler','RK23','RK45','DOP853' 'LSODA'
 restart = False       # flag to determine a restart from file
 restrt_tstep = 10000     # tstep number of restart file to use
@@ -456,15 +456,16 @@ steady_count = 0       # variable to track how many continous steps a steady sta
 no_prog_upd = 1000
 
 print_freq = 1000         # frequency of print statements in Euler mode
-output_freq = 100         # frequency of soln storage
+output_freq = 100_000         # frequency of soln storage
 checkpnt_freq = 1e7       # frequency of restart file write
 stats_freq = 1000         # frequecy to write to the _stats files
 plot_freq = 1000          # frequency to create plots for movie
 
 
 ########################### space grid setup ##################################
-nnx = 200                   # number of grid points
-L_x = 500/lh.x_scale        # Physical size of domain cm/x_scale
+L_x_cm = 1_250
+L_x = L_x_cm / lh.x_scale        # Physical size of domain cm/x_scale
+nnx = int(200 * L_x_cm / 500)                   # number of grid points
 h = L_x/(nnx-1)             # spatial step size
 x = np.linspace(0, L_x,nnx) # position array
 
@@ -512,7 +513,7 @@ else:
     
 ######################## time integration values ##############################
 
-tf = 10e-6#300000/lh.t_scale # final sim time in a, scaled to dimensionless form 
+tf = 758.15#300000/lh.t_scale # final sim time in a, scaled to dimensionless form 
 
 # set the timestep manually, ONLY used in Euler mode
 delta_t = 1e-6#0.001/lh.t_scale   # timestep in a, 1.13e-2/tsc = 10^-6 in scaled time
